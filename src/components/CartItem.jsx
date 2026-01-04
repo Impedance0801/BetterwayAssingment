@@ -1,7 +1,7 @@
 import { FcDeleteDatabase } from "react-icons/fc";
 import { useDispatch } from "react-redux";
-import { removeAll } from "../redux/Slices/CartSlice";
-import { incrementStockBy } from "../redux/Slices/InventorySlice";
+import { add, removeOne, removeAll } from "../redux/Slices/CartSlice";
+import { incrementStockBy, decrementStockBy } from "../redux/Slices/InventorySlice";
 import toast from "react-hot-toast";
 
 const CartItem = ({ item, itemIndex }) => {
@@ -11,6 +11,18 @@ const CartItem = ({ item, itemIndex }) => {
     dispatch(removeAll(item.id));
     dispatch(incrementStockBy({ id: item.id, qty }));
     toast.success("Item removed");
+  };
+
+  const increaseQty = () => {
+    // try to add one more of this item
+    dispatch(decrementStockBy({ id: item.id, qty: 1 }));
+    dispatch(add(item));
+  };
+
+  const decreaseQty = () => {
+    if (!item.quantity || item.quantity <= 0) return;
+    dispatch(removeOne(item.id));
+    dispatch(incrementStockBy({ id: item.id, qty: 1 }));
   };
 
   return (
@@ -35,13 +47,30 @@ const CartItem = ({ item, itemIndex }) => {
 
       <div className="flex flex-col items-end space-y-2">
         <p className="text-green-600 font-bold">${item.price}</p>
-        <button
-          onClick={removeFromCart}
-          aria-label={`Remove ${item.title} from cart`}
-          className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-red-50 text-red-600"
-        >
-          <FcDeleteDatabase size={20} />
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={decreaseQty}
+            aria-label={`Decrease ${item.title} quantity`}
+            className="w-8 h-8 rounded-full border flex items-center justify-center"
+          >
+            -
+          </button>
+          <div className="px-2">{item.quantity || 1}</div>
+          <button
+            onClick={increaseQty}
+            aria-label={`Increase ${item.title} quantity`}
+            className="w-8 h-8 rounded-full border flex items-center justify-center"
+          >
+            +
+          </button>
+          <button
+            onClick={removeFromCart}
+            aria-label={`Remove ${item.title} from cart`}
+            className="flex items-center justify-center w-9 h-9 rounded-full hover:bg-red-50 text-red-600"
+          >
+            <FcDeleteDatabase size={20} />
+          </button>
+        </div>
       </div>
     </div>
   );
