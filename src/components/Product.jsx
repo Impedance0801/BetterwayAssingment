@@ -12,6 +12,10 @@ const Product = ({ post }) => {
   const dispatch = useDispatch();
 
   const addToCart = () => {
+    if (cartQty >= 3) {
+      toast.error("You can add maximum 3 of this item");
+      return;
+    }
     if (!remaining || remaining <= 0) {
       toast.error("Item is out of stock");
       return;
@@ -69,7 +73,7 @@ const Product = ({ post }) => {
             <button
               className="text-gray-700 border-2 border-gray-700 rounded-full font-semibold text-[12px] p-1 px-3 uppercase hover:bg-gray-700 hover:text-white transition duration-300 ease-in"
               onClick={addToCart}
-              disabled={remaining <= 0}
+              disabled={remaining <= 0 || cartQty >= 3}
             >
               +
             </button>

@@ -9,7 +9,11 @@ export const CartSlice = createSlice({
       if (!prod || prod.id == null) return;
       const existing = state.find((i) => i.id === prod.id);
       if (existing) {
-        existing.quantity = (existing.quantity || 1) + 1;
+        const currentQty = existing.quantity || 1;
+        if (currentQty < 3) {
+          existing.quantity = currentQty + 1;
+        }
+        // if already 3, do nothing (max cap)
       } else {
         state.push({ ...prod, quantity: 1 });
       }

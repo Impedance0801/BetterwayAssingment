@@ -14,6 +14,11 @@ const CartItem = ({ item, itemIndex }) => {
   };
 
   const increaseQty = () => {
+    const currentQty = item.quantity || 0;
+    if (currentQty >= 3) {
+      toast.error("Maximum 3 of this item allowed");
+      return;
+    }
     // try to add one more of this item
     dispatch(decrementStockBy({ id: item.id, qty: 1 }));
     dispatch(add(item));
@@ -60,6 +65,7 @@ const CartItem = ({ item, itemIndex }) => {
             onClick={increaseQty}
             aria-label={`Increase ${item.title} quantity`}
             className="w-8 h-8 rounded-full border flex items-center justify-center"
+            disabled={(item.quantity || 0) >= 3}
           >
             +
           </button>
