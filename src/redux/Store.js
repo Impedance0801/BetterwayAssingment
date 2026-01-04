@@ -1,5 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
 import CartSlice from "./Slices/CartSlice";
+import InventorySlice from "./Slices/InventorySlice";
 
 const STORAGE_KEY = "shop_cart_v1";
 
@@ -28,6 +29,7 @@ function saveState(state) {
 export const store = configureStore({
     reducer: {
         cart: CartSlice,
+        inventory: InventorySlice,
     },
     preloadedState: loadState(),
 });

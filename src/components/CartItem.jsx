@@ -1,12 +1,15 @@
 import { FcDeleteDatabase } from "react-icons/fc";
 import { useDispatch } from "react-redux";
-import { remove } from "../redux/Slices/CartSlice";
+import { removeAll } from "../redux/Slices/CartSlice";
+import { incrementStockBy } from "../redux/Slices/InventorySlice";
 import toast from "react-hot-toast";
 
 const CartItem = ({ item, itemIndex }) => {
   const dispatch = useDispatch();
   const removeFromCart = () => {
-    dispatch(remove(item.id));
+    const qty = item.quantity || 1;
+    dispatch(removeAll(item.id));
+    dispatch(incrementStockBy({ id: item.id, qty }));
     toast.success("Item removed");
   };
 

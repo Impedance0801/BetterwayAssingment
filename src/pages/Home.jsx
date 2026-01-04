@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setProducts } from "../redux/Slices/InventorySlice";
 import Spinner from "../components/Spinner";
 import Product from "../components/Product";
 import Navbar from "../components/Navbar";
@@ -12,21 +14,10 @@ const Home = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [sortOrder, setSortOrder] = useState("none");
+  const [stockFilter, setStockFilter] = useState("all");
 
-  async function fetchProductData() {
-    setLoading(true);
-    try {
-      const res = await fetch(API_URL);
-      const data = await res.json();
-
-      setAllPosts(data || []);
-      setPosts(data || []);
-    } catch (error) {
-      console.log("error aa gya");
-      setPosts([]);
-    }
-    setLoading(false);
-  }
+  const dispatch = useDispatch();
+  const inventory = useSelector((s) => s.inventory?.stock || {});
 
   function searchPost(value) {
     setSearchQuery(value || "");
@@ -84,13 +75,30 @@ const Home = () => {
     }
 
     setPosts(filtered);
-  }, [allPosts, searchQuery, selectedCategory, sortOrder]);
+  }, [allPosts, searchQuery, selectedCategory, sortOrder, inventory, stockFilter]);
 
   // useEffect(() => {
   //   searchPost("Mens Casual Slim Fit");
   // });
 
   useEffect(() => {
+    async function fetchProductData() {
+      setLoading(true);
+      try {
+        const res = await fetch(API_URL);
+        const data = await res.json();
+
+        setAllPosts(data || []);
+        setPosts(data || []);
+        // initialize inventory state for products
+        dispatch(setProducts(data || []));
+      } catch (error) {
+        console.log("error aa gya");
+        setPosts([]);
+      }
+      setLoading(false);
+    }
+
     fetchProductData();
   }, []);
 
